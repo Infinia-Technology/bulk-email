@@ -1,0 +1,900 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>XAILON Platform Launch</title>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-primary: #0a0a0f;
+            --bg-secondary: #12121a;
+            --bg-card: #1a1a24;
+            --accent: #00ff88;
+            --accent-dim: #00ff8833;
+            --text-primary: #ffffff;
+            --text-secondary: #8888aa;
+            --danger: #ff4466;
+            --warning: #ffaa00;
+            --border: #2a2a3a;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Syne', sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+            background-image: 
+                radial-gradient(ellipse at 20% 20%, rgba(0, 255, 136, 0.05) 0%, transparent 50%),
+                radial-gradient(ellipse at 80% 80%, rgba(0, 100, 255, 0.05) 0%, transparent 50%);
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 50px;
+        }
+        
+        h1 {
+            font-size: 3rem;
+            font-weight: 800;
+            letter-spacing: -2px;
+            margin-bottom: 10px;
+            background: linear-gradient(135deg, var(--accent) 0%, #00ccff 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .subtitle {
+            color: var(--text-secondary);
+            font-family: 'Space Mono', monospace;
+            font-size: 0.9rem;
+        }
+        
+        .grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+        
+        .grid-3 {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+        
+        @media (max-width: 1200px) {
+            .grid-3 {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+        
+        @media (max-width: 900px) {
+            .grid, .grid-3 {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        .card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 30px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--accent), transparent);
+        }
+        
+        .card-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .card-title span {
+            font-size: 1.2rem;
+        }
+        
+        .config-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 12px 0;
+            border-bottom: 1px solid var(--border);
+            font-family: 'Space Mono', monospace;
+            font-size: 0.85rem;
+        }
+        
+        .config-row:last-child {
+            border-bottom: none;
+        }
+        
+        .config-label {
+            color: var(--text-secondary);
+        }
+        
+        .config-value {
+            color: var(--text-primary);
+            text-align: right;
+            max-width: 60%;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .status-ok {
+            background: rgba(0, 255, 136, 0.15);
+            color: var(--accent);
+        }
+        
+        .status-error {
+            background: rgba(255, 68, 102, 0.15);
+            color: var(--danger);
+        }
+        
+        .status-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: currentColor;
+        }
+        
+        .recipients-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-family: 'Space Mono', monospace;
+            font-size: 0.8rem;
+        }
+        
+        .recipients-table th {
+            text-align: left;
+            padding: 10px;
+            color: var(--text-secondary);
+            border-bottom: 1px solid var(--border);
+            font-weight: 400;
+        }
+        
+        .recipients-table td {
+            padding: 10px;
+            border-bottom: 1px solid var(--border);
+        }
+        
+        .recipients-table tr:last-child td {
+            border-bottom: none;
+        }
+        
+        .total-badge {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 15px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-top: 15px;
+        }
+        
+        .total-number {
+            font-size: 2rem;
+            font-weight: 800;
+            color: var(--accent);
+        }
+        
+        .send-section {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 30px;
+            text-align: center;
+        }
+        
+        .btn {
+            font-family: 'Syne', sans-serif;
+            font-size: 1rem;
+            font-weight: 700;
+            padding: 16px 48px;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+        
+        .btn-primary {
+            background: var(--accent);
+            color: var(--bg-primary);
+        }
+        
+        .btn-primary:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 40px rgba(0, 255, 136, 0.3);
+        }
+        
+        .btn-primary:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        
+        .btn-secondary {
+            background: var(--bg-secondary);
+            color: var(--text-primary);
+            border: 1px solid var(--border);
+        }
+        
+        .btn-secondary:hover {
+            border-color: var(--accent);
+        }
+        
+        .btn-danger {
+            background: var(--danger);
+            color: white;
+        }
+        
+        .btn-group {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        
+        .progress-container {
+            margin-top: 30px;
+            display: none;
+        }
+        
+        .progress-container.active {
+            display: block;
+        }
+        
+        .progress-bar {
+            height: 8px;
+            background: var(--bg-secondary);
+            border-radius: 4px;
+            overflow: hidden;
+            margin-bottom: 15px;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--accent), #00ccff);
+            border-radius: 4px;
+            transition: width 0.3s ease;
+            width: 0%;
+        }
+        
+        .progress-stats {
+            display: flex;
+            justify-content: center;
+            gap: 40px;
+            font-family: 'Space Mono', monospace;
+            font-size: 0.9rem;
+        }
+        
+        .stat {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .stat-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+        
+        .stat-value.sent {
+            color: var(--accent);
+        }
+        
+        .stat-value.failed {
+            color: var(--danger);
+        }
+        
+        .stat-label {
+            color: var(--text-secondary);
+            font-size: 0.75rem;
+            text-transform: uppercase;
+        }
+        
+        .errors-list {
+            margin-top: 20px;
+            background: rgba(255, 68, 102, 0.1);
+            border: 1px solid var(--danger);
+            border-radius: 8px;
+            padding: 15px;
+            text-align: left;
+            max-height: 200px;
+            overflow-y: auto;
+            display: none;
+        }
+        
+        .errors-list.active {
+            display: block;
+        }
+        
+        .error-item {
+            font-family: 'Space Mono', monospace;
+            font-size: 0.8rem;
+            padding: 8px 0;
+            border-bottom: 1px solid rgba(255, 68, 102, 0.2);
+        }
+        
+        .error-item:last-child {
+            border-bottom: none;
+        }
+        
+        .alert {
+            padding: 15px 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-family: 'Space Mono', monospace;
+            font-size: 0.85rem;
+        }
+        
+        .alert-error {
+            background: rgba(255, 68, 102, 0.15);
+            border: 1px solid var(--danger);
+            color: var(--danger);
+        }
+        
+        .alert-warning {
+            background: rgba(255, 170, 0, 0.15);
+            border: 1px solid var(--warning);
+            color: var(--warning);
+        }
+        
+        .alert-success {
+            background: rgba(0, 255, 136, 0.15);
+            border: 1px solid var(--accent);
+            color: var(--accent);
+        }
+        
+        .complete-message {
+            display: none;
+            margin-top: 20px;
+            padding: 20px;
+            background: rgba(0, 255, 136, 0.1);
+            border: 1px solid var(--accent);
+            border-radius: 12px;
+        }
+        
+        .complete-message.active {
+            display: block;
+        }
+        
+        .complete-message h3 {
+            color: var(--accent);
+            margin-bottom: 10px;
+        }
+        
+        /* Upload Section */
+        .upload-zone {
+            border: 2px dashed var(--border);
+            border-radius: 12px;
+            padding: 30px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-bottom: 20px;
+        }
+        
+        .upload-zone:hover {
+            border-color: var(--accent);
+            background: rgba(0, 255, 136, 0.05);
+        }
+        
+        .upload-zone.dragover {
+            border-color: var(--accent);
+            background: rgba(0, 255, 136, 0.1);
+        }
+        
+        .upload-zone input {
+            display: none;
+        }
+        
+        .upload-icon {
+            font-size: 3rem;
+            margin-bottom: 10px;
+        }
+        
+        .upload-text {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+        
+        .upload-text strong {
+            color: var(--accent);
+        }
+        
+        /* Preview Modal */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        
+        .modal-overlay.active {
+            display: flex;
+        }
+        
+        .modal {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            max-width: 800px;
+            width: 100%;
+            max-height: 90vh;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .modal-header {
+            padding: 20px 30px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .modal-header h2 {
+            font-size: 1.3rem;
+        }
+        
+        .modal-close {
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            font-size: 1.5rem;
+            cursor: pointer;
+            padding: 5px;
+        }
+        
+        .modal-close:hover {
+            color: var(--text-primary);
+        }
+        
+        .modal-body {
+            padding: 30px;
+            overflow-y: auto;
+            flex: 1;
+        }
+        
+        .preview-meta {
+            background: var(--bg-secondary);
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 20px;
+            font-family: 'Space Mono', monospace;
+            font-size: 0.85rem;
+        }
+        
+        .preview-meta-row {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 8px;
+        }
+        
+        .preview-meta-row:last-child {
+            margin-bottom: 0;
+        }
+        
+        .preview-meta-label {
+            color: var(--text-secondary);
+            min-width: 80px;
+        }
+        
+        .preview-meta-value {
+            color: var(--text-primary);
+        }
+        
+        .email-preview-frame {
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        
+        .email-preview-frame iframe {
+            width: 100%;
+            height: 500px;
+            border: none;
+        }
+        
+        .modal-footer {
+            padding: 20px 30px;
+            border-top: 1px solid var(--border);
+            display: flex;
+            justify-content: flex-end;
+            gap: 15px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>XAILON Platform Launch</h1>
+            <p class="subtitle">Bulk Email Distribution System</p>
+        </header>
+        
+        {% if errors %}
+        <div class="alert alert-error">
+            <strong>Configuration Errors:</strong><br>
+            {% for error in errors %}
+                • {{ error }}<br>
+            {% endfor %}
+        </div>
+        {% endif %}
+        
+        {% if invalid_emails %}
+        <div class="alert alert-warning">
+            <strong>Warning:</strong> {{ invalid_emails|length }} invalid email(s) found in CSV and will be skipped.
+        </div>
+        {% endif %}
+        
+        <div class="grid-3">
+            <div class="card">
+                <h2 class="card-title"><span>⚙️</span> Configuration</h2>
+                <div class="config-row">
+                    <span class="config-label">From</span>
+                    <span class="config-value">{{ config.from_name }} &lt;{{ config.from_email }}&gt;</span>
+                </div>
+                <div class="config-row">
+                    <span class="config-label">Subject</span>
+                    <span class="config-value">{{ config.subject }}</span>
+                </div>
+                <div class="config-row">
+                    <span class="config-label">Rate Limit</span>
+                    <span class="config-value">{{ config.rate_limit }} emails/sec</span>
+                </div>
+            </div>
+            
+            <div class="card">
+                <h2 class="card-title"><span>📁</span> Files Status</h2>
+                <div class="config-row">
+                    <span class="config-label">CSV File</span>
+                    <span class="status-badge {% if files_status.csv %}status-ok{% else %}status-error{% endif %}">
+                        <span class="status-dot"></span>
+                        {% if files_status.csv %}Ready{% else %}Missing{% endif %}
+                    </span>
+                </div>
+                <div class="config-row">
+                    <span class="config-label">HTML Template</span>
+                    <span class="status-badge {% if files_status.template %}status-ok{% else %}status-error{% endif %}">
+                        <span class="status-dot"></span>
+                        {% if files_status.template %}Ready{% else %}Missing{% endif %}
+                    </span>
+                </div>
+            </div>
+            
+            <div class="card">
+                <h2 class="card-title"><span>📤</span> Upload CSV</h2>
+                <div class="upload-zone" id="uploadZone">
+                    <input type="file" id="csvInput" accept=".csv">
+                    <div class="upload-icon">📄</div>
+                    <p class="upload-text">
+                        <strong>Click to upload</strong> or drag & drop<br>
+                        CSV file with email, name columns
+                    </p>
+                </div>
+                <div id="uploadStatus"></div>
+            </div>
+        </div>
+        
+        <div class="card" style="margin-bottom: 30px;">
+            <h2 class="card-title"><span>👥</span> Recipients Preview</h2>
+            {% if recipients %}
+            <table class="recipients-table">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Email</th>
+                        <th>Name</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for recipient in recipients %}
+                    <tr>
+                        <td>{{ loop.index }}</td>
+                        <td>{{ recipient.email }}</td>
+                        <td>{{ recipient.name }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            {% else %}
+            <p style="color: var(--text-secondary);">No recipients loaded. Please upload a CSV file.</p>
+            {% endif %}
+            
+            <div class="total-badge">
+                <span>Total Recipients</span>
+                <span class="total-number" id="totalRecipients">{{ total_recipients }}</span>
+            </div>
+        </div>
+        
+        <div class="send-section">
+            <div class="btn-group">
+                <button id="previewBtn" class="btn btn-secondary" 
+                    {% if not files_status.template or total_recipients == 0 %}disabled{% endif %}>
+                    Preview Email
+                </button>
+                <button id="sendBtn" class="btn btn-primary"
+                    {% if errors or not files_status.csv or total_recipients == 0 %}disabled{% endif %}>
+                    Send Emails
+                </button>
+            </div>
+            
+            <div id="progressContainer" class="progress-container">
+                <div class="progress-bar">
+                    <div id="progressFill" class="progress-fill"></div>
+                </div>
+                <div class="progress-stats">
+                    <div class="stat">
+                        <span id="sentCount" class="stat-value sent">0</span>
+                        <span class="stat-label">Sent</span>
+                    </div>
+                    <div class="stat">
+                        <span id="failedCount" class="stat-value failed">0</span>
+                        <span class="stat-label">Failed</span>
+                    </div>
+                    <div class="stat">
+                        <span id="totalCount" class="stat-value">0</span>
+                        <span class="stat-label">Total</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div id="errorsList" class="errors-list"></div>
+            
+            <div id="completeMessage" class="complete-message">
+                <h3>✅ Email Delivery Complete!</h3>
+                <p>All emails have been processed. Check the stats above for details.</p>
+                <button onclick="location.reload()" class="btn btn-primary" style="margin-top: 15px;">
+                    Send Another Batch
+                </button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Preview Modal -->
+    <div class="modal-overlay" id="previewModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h2>📧 Email Preview</h2>
+                <button class="modal-close" onclick="closePreview()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="preview-meta">
+                    <div class="preview-meta-row">
+                        <span class="preview-meta-label">From:</span>
+                        <span class="preview-meta-value" id="previewFrom">-</span>
+                    </div>
+                    <div class="preview-meta-row">
+                        <span class="preview-meta-label">Subject:</span>
+                        <span class="preview-meta-value" id="previewSubject">-</span>
+                    </div>
+                    <div class="preview-meta-row">
+                        <span class="preview-meta-label">Attachment:</span>
+                        <span class="preview-meta-value" id="previewAttachment">-</span>
+                    </div>
+                </div>
+                <div class="email-preview-frame">
+                    <iframe id="previewFrame" srcdoc=""></iframe>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closePreview()">Close</button>
+                <button class="btn btn-primary" onclick="closePreview(); document.getElementById('sendBtn').click();">
+                    Confirm & Send
+                </button>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        const sendBtn = document.getElementById('sendBtn');
+        const previewBtn = document.getElementById('previewBtn');
+        const progressContainer = document.getElementById('progressContainer');
+        const progressFill = document.getElementById('progressFill');
+        const sentCount = document.getElementById('sentCount');
+        const failedCount = document.getElementById('failedCount');
+        const totalCount = document.getElementById('totalCount');
+        const errorsList = document.getElementById('errorsList');
+        const completeMessage = document.getElementById('completeMessage');
+        const uploadZone = document.getElementById('uploadZone');
+        const csvInput = document.getElementById('csvInput');
+        const uploadStatus = document.getElementById('uploadStatus');
+        const previewModal = document.getElementById('previewModal');
+        
+        let pollInterval = null;
+        
+        // CSV Upload
+        uploadZone.addEventListener('click', () => csvInput.click());
+        
+        uploadZone.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            uploadZone.classList.add('dragover');
+        });
+        
+        uploadZone.addEventListener('dragleave', () => {
+            uploadZone.classList.remove('dragover');
+        });
+        
+        uploadZone.addEventListener('drop', (e) => {
+            e.preventDefault();
+            uploadZone.classList.remove('dragover');
+            const file = e.dataTransfer.files[0];
+            if (file) uploadCSV(file);
+        });
+        
+        csvInput.addEventListener('change', () => {
+            if (csvInput.files[0]) uploadCSV(csvInput.files[0]);
+        });
+        
+        async function uploadCSV(file) {
+            const formData = new FormData();
+            formData.append('csv_file', file);
+            
+            uploadStatus.innerHTML = '<div class="alert alert-warning">Uploading...</div>';
+            
+            try {
+                const response = await fetch('/upload-csv', {
+                    method: 'POST',
+                    body: formData
+                });
+                const data = await response.json();
+                
+                if (data.error) {
+                    uploadStatus.innerHTML = `<div class="alert alert-error">Error: ${data.error}</div>`;
+                } else {
+                    uploadStatus.innerHTML = `<div class="alert alert-success">✅ Uploaded! ${data.total} valid emails found.</div>`;
+                    setTimeout(() => location.reload(), 1500);
+                }
+            } catch (error) {
+                uploadStatus.innerHTML = `<div class="alert alert-error">Upload failed: ${error}</div>`;
+            }
+        }
+        
+        // Preview
+        previewBtn.addEventListener('click', async () => {
+            try {
+                const response = await fetch('/preview');
+                const data = await response.json();
+                
+                if (data.error) {
+                    alert('Error: ' + data.error);
+                    return;
+                }
+                
+                document.getElementById('previewFrom').textContent = data.from;
+                document.getElementById('previewSubject').textContent = data.subject;
+                document.getElementById('previewAttachment').textContent = data.pdf_name;
+                document.getElementById('previewFrame').srcdoc = data.html;
+                previewModal.classList.add('active');
+                
+            } catch (error) {
+                alert('Error loading preview: ' + error);
+            }
+        });
+        
+        function closePreview() {
+            previewModal.classList.remove('active');
+        }
+        
+        // Close modal on outside click
+        previewModal.addEventListener('click', (e) => {
+            if (e.target === previewModal) closePreview();
+        });
+        
+        // Send
+        sendBtn.addEventListener('click', async () => {
+            const total = parseInt(document.getElementById('totalRecipients').textContent);
+            if (!confirm(`Are you sure you want to send emails to ${total} recipients?`)) {
+                return;
+            }
+            
+            sendBtn.disabled = true;
+            sendBtn.textContent = 'Sending...';
+            previewBtn.disabled = true;
+            progressContainer.classList.add('active');
+            
+            try {
+                const response = await fetch('/send', { method: 'POST' });
+                const data = await response.json();
+                
+                if (data.error) {
+                    alert('Error: ' + data.error);
+                    sendBtn.disabled = false;
+                    sendBtn.textContent = 'Send Emails';
+                    previewBtn.disabled = false;
+                    return;
+                }
+                
+                totalCount.textContent = data.total;
+                pollInterval = setInterval(pollStatus, 500);
+                
+            } catch (error) {
+                alert('Error starting send: ' + error);
+                sendBtn.disabled = false;
+                sendBtn.textContent = 'Send Emails';
+                previewBtn.disabled = false;
+            }
+        });
+        
+        async function pollStatus() {
+            try {
+                const response = await fetch('/status');
+                const data = await response.json();
+                
+                sentCount.textContent = data.sent;
+                failedCount.textContent = data.failed;
+                totalCount.textContent = data.total;
+                
+                const progress = data.total > 0 ? ((data.sent + data.failed) / data.total * 100) : 0;
+                progressFill.style.width = progress + '%';
+                
+                if (data.errors && data.errors.length > 0) {
+                    errorsList.classList.add('active');
+                    errorsList.innerHTML = data.errors.map(e => 
+                        `<div class="error-item"><strong>${e.email}</strong>: ${e.error}</div>`
+                    ).join('');
+                }
+                
+                if (data.complete) {
+                    clearInterval(pollInterval);
+                    completeMessage.classList.add('active');
+                    sendBtn.style.display = 'none';
+                    previewBtn.style.display = 'none';
+                }
+                
+            } catch (error) {
+                console.error('Error polling status:', error);
+            }
+        }
+    </script>
+</body>
+</html>

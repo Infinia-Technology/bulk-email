@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Email Preview - SAIF Bulk Email Sender</title>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-primary: #0a0a0f;
+            --bg-secondary: #12121a;
+            --bg-card: #1a1a24;
+            --accent: #00ff88;
+            --accent-dim: #00ff8833;
+            --accent-blue: #00ccff;
+            --text-primary: #ffffff;
+            --text-secondary: #8888aa;
+            --danger: #ff4466;
+            --warning: #ffaa00;
+            --border: #2a2a3a;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Syne', sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+            background-image: 
+                radial-gradient(ellipse at 20% 20%, rgba(0, 255, 136, 0.05) 0%, transparent 50%),
+                radial-gradient(ellipse at 80% 80%, rgba(0, 100, 255, 0.05) 0%, transparent 50%);
+        }
+        
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        
+        h1 {
+            font-size: 2.5rem;
+            font-weight: 800;
+            letter-spacing: -2px;
+            margin-bottom: 10px;
+            background: linear-gradient(135deg, var(--accent) 0%, var(--accent-blue) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .subtitle {
+            color: var(--text-secondary);
+            font-family: 'Space Mono', monospace;
+            font-size: 0.9rem;
+        }
+        
+        .preview-info {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+        
+        .info-item {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 15px 25px;
+            font-family: 'Space Mono', monospace;
+            font-size: 0.85rem;
+        }
+        
+        .info-item strong {
+            color: var(--accent);
+        }
+        
+        .email-preview-container {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            overflow: hidden;
+            margin-bottom: 30px;
+        }
+        
+        .preview-header {
+            background: var(--bg-secondary);
+            padding: 20px;
+            border-bottom: 1px solid var(--border);
+        }
+        
+        .preview-header h2 {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .email-meta {
+            font-family: 'Space Mono', monospace;
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+        }
+        
+        .email-meta p {
+            margin: 5px 0;
+        }
+        
+        .email-meta strong {
+            color: var(--text-primary);
+        }
+        
+        .preview-body {
+            background: #ffffff;
+            padding: 0;
+        }
+        
+        .preview-body iframe {
+            width: 100%;
+            min-height: 600px;
+            border: none;
+        }
+        
+        .action-buttons {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        
+        .btn {
+            font-family: 'Syne', sans-serif;
+            font-size: 1rem;
+            font-weight: 700;
+            padding: 16px 48px;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .btn-primary {
+            background: var(--accent);
+            color: var(--bg-primary);
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 40px rgba(0, 255, 136, 0.3);
+        }
+        
+        .btn-secondary {
+            background: var(--bg-secondary);
+            color: var(--text-primary);
+            border: 1px solid var(--border);
+        }
+        
+        .btn-secondary:hover {
+            border-color: var(--accent);
+        }
+        
+        .attachment-preview {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 30px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .attachment-icon {
+            font-size: 2.5rem;
+        }
+        
+        .attachment-info h3 {
+            font-size: 1rem;
+            margin-bottom: 5px;
+        }
+        
+        .attachment-info p {
+            color: var(--text-secondary);
+            font-family: 'Space Mono', monospace;
+            font-size: 0.8rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Email Preview</h1>
+            <p class="subtitle">Review the email before sending to {{ total_recipients }} recipients</p>
+        </header>
+        
+        <div class="preview-info">
+            <div class="info-item">
+                <strong>From:</strong> {{ config.from_name }} &lt;{{ config.from_email }}&gt;
+            </div>
+            <div class="info-item">
+                <strong>Subject:</strong> {{ config.subject }}
+            </div>
+            <div class="info-item">
+                <strong>To:</strong> {{ total_recipients }} recipients
+            </div>
+        </div>
+        
+        <div class="email-preview-container">
+            <div class="preview-header">
+                <h2>📧 Email Content</h2>
+                <div class="email-meta">
+                    <p><strong>Sample Recipient:</strong> {{ sample_name }}</p>
+                    <p><strong>Personalization:</strong> {{name}} will be replaced with recipient's name</p>
+                </div>
+            </div>
+            <div class="preview-body">
+                <iframe id="previewFrame" srcdoc="{{ preview_html | replace('cid:newsletter_image', 'data:image/png;base64,' + image_base64) | e }}"></iframe>
+            </div>
+        </div>
+        
+        <div class="attachment-preview">
+            <div class="attachment-icon">📎</div>
+            <div class="attachment-info">
+                <h3>PDF Attachment</h3>
+                <p>{{ config.pdf_original_name }}</p>
+            </div>
+        </div>
+        
+        <div class="action-buttons">
+            <a href="/" class="btn btn-secondary">
+                ← Back to Dashboard
+            </a>
+            <button id="sendFromPreview" class="btn btn-primary">
+                🚀 Send to {{ total_recipients }} Recipients
+            </button>
+        </div>
+    </div>
+    
+    <script>
+        document.getElementById('sendFromPreview').addEventListener('click', async () => {
+            if (!confirm('Are you sure you want to send emails to {{ total_recipients }} recipients?')) {
+                return;
+            }
+            
+            const btn = document.getElementById('sendFromPreview');
+            btn.disabled = true;
+            btn.textContent = 'Starting...';
+            
+            try {
+                const response = await fetch('/send', { method: 'POST' });
+                const data = await response.json();
+                
+                if (data.error) {
+                    alert('Error: ' + data.error);
+                    btn.disabled = false;
+                    btn.textContent = '🚀 Send to {{ total_recipients }} Recipients';
+                } else {
+                    // Redirect to main page to see progress
+                    window.location.href = '/?sending=true';
+                }
+            } catch (error) {
+                alert('Error: ' + error);
+                btn.disabled = false;
+                btn.textContent = '🚀 Send to {{ total_recipients }} Recipients';
+            }
+        });
+    </script>
+</body>
+</html>
+

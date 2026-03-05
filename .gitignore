@@ -1,0 +1,27 @@
+# Environment
+.env
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+
+# Uploads
+uploads/
+
+# Backup/data CSVs (keep only sample)
+emails_backup.csv
+emails_full.csv
+emails1.csv
+emails2.csv
+emails3.csv
+emails4.csv
+emails5.csv
+list_infinia+exec+coe.csv
+unique_domains.csv
+
+# Raw assets
+Raw/
+
+# OS
+.DS_Store

@@ -1,0 +1,42 @@
+services:
+  bulk-sender:
+    build: .
+    stdin_open: true
+    tty: true
+    volumes:
+      - ./emails.csv:/app/emails.csv:ro
+      - "./raw/SAIF - Newsletter Nov2025.png:/app/newsletter.png:ro"
+      - "./raw/SAIF - Newsletter Nov2025.pdf:/app/newsletter.pdf:ro"
+    environment:
+      - RESEND_API_KEY=${RESEND_API_KEY}
+      - FROM_EMAIL=${FROM_EMAIL}
+      - FROM_NAME=${FROM_NAME:-SAIF Support}
+      - EMAIL_SUBJECT=${EMAIL_SUBJECT:-SAIF Newsletter}
+      - CSV_FILE=emails.csv
+      - IMAGE_FILE=newsletter.png
+      - PDF_FILE=newsletter.pdf
+      - HTML_TEMPLATE=template.html
+      - RATE_LIMIT=${RATE_LIMIT:-10}
+
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile.web
+    ports:
+      - "5050:5000"
+    volumes:
+      - ./emails.csv:/app/emails.csv
+      - "./raw/SAIF - Newsletter Nov2025.png:/app/newsletter.png:ro"
+      - "./raw/SAIF - Newsletter Nov2025.pdf:/app/newsletter.pdf:ro"
+    environment:
+      - RESEND_API_KEY=${RESEND_API_KEY}
+      - FROM_EMAIL=${FROM_EMAIL}
+      - FROM_NAME=${FROM_NAME:-SAIF Support}
+      - EMAIL_SUBJECT=${EMAIL_SUBJECT:-SAIF Newsletter}
+      - CSV_FILE=emails.csv
+      - IMAGE_FILE=newsletter.png
+      - PDF_FILE=newsletter.pdf
+      - PDF_ORIGINAL_NAME=SAIF - Newsletter Nov2025.pdf
+      - HTML_TEMPLATE=template.html
+      - RATE_LIMIT=${RATE_LIMIT:-10}
+
