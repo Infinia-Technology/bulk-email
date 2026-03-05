@@ -257,18 +257,20 @@ def upload_csv():
 def preview():
     """Get email preview HTML."""
     config = get_config()
-    
+    from_name = request.args.get('from_name') or config['from_name']
+    subject = request.args.get('subject') or config['subject']
+
     try:
         html_template = load_html_template(config['html_template'])
         recipients, _ = load_csv(config['csv_file'])
         sample_name = recipients[0]['name'] if recipients else "John Doe"
         preview_html = personalize_html(html_template, sample_name)
-        
+
         return jsonify({
             'html': preview_html,
-            'subject': config['subject'],
-            'from': f"{config['from_name']} <{config['from_email']}>",
-            'pdf_name': config.get('pdf_original_name', 'newsletter.pdf')
+            'subject': subject,
+            'from': f"{from_name} <{config['from_email']}>",
+            'pdf_name': config.get('pdf_original_name') or ''
         })
     except Exception as e:
         return jsonify({'error': str(e)}), 400
@@ -278,22 +280,29 @@ def preview():
 def send():
     """Start sending emails."""
     global send_state
-    
+
     if send_state['is_sending']:
         return jsonify({'error': 'Already sending emails'}), 400
-    
+
     config = get_config()
-    
+
+    # Override from_name and subject from request body
+    data = request.get_json(silent=True) or {}
+    if data.get('from_name'):
+        config['from_name'] = data['from_name']
+    if data.get('subject'):
+        config['subject'] = data['subject']
+
     try:
         recipients, _ = load_csv(config['csv_file'])
         html_template = load_html_template(config['html_template'])
     except Exception as e:
         return jsonify({'error': str(e)}), 400
-    
+
     # Start sending in background
     thread = Thread(target=send_emails_async, args=(recipients, html_template, config))
     thread.start()
-    
+
     return jsonify({'status': 'started', 'total': len(recipients)})
 
 

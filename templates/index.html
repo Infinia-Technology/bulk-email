@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>XAILON Platform Launch</title>
+    <title>Bulk Email Sender</title>
     <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -557,8 +557,8 @@
 <body>
     <div class="container">
         <header>
-            <h1>XAILON Platform Launch</h1>
-            <p class="subtitle">Bulk Email Distribution System</p>
+            <h1>Bulk Email Sender</h1>
+            <p class="subtitle">Upload recipients, preview, and send</p>
         </header>
         
         {% if errors %}
@@ -579,13 +579,19 @@
         <div class="grid-3">
             <div class="card">
                 <h2 class="card-title"><span>⚙️</span> Configuration</h2>
-                <div class="config-row">
-                    <span class="config-label">From</span>
-                    <span class="config-value">{{ config.from_name }} &lt;{{ config.from_email }}&gt;</span>
+                <div class="config-row" style="flex-direction: column; gap: 6px;">
+                    <span class="config-label">From Name</span>
+                    <input type="text" id="fromName" placeholder="e.g. Stratify, XAILON"
+                        style="background: var(--bg-secondary); border: 1px solid var(--border); border-radius: 6px; padding: 8px 12px; color: var(--text-primary); font-family: 'Space Mono', monospace; font-size: 0.85rem; width: 100%;">
                 </div>
                 <div class="config-row">
+                    <span class="config-label">From Address</span>
+                    <span class="config-value">{{ config.from_email }}</span>
+                </div>
+                <div class="config-row" style="flex-direction: column; gap: 6px;">
                     <span class="config-label">Subject</span>
-                    <span class="config-value">{{ config.subject }}</span>
+                    <input type="text" id="emailSubject" placeholder="e.g. What's New — March 2026"
+                        style="background: var(--bg-secondary); border: 1px solid var(--border); border-radius: 6px; padding: 8px 12px; color: var(--text-primary); font-family: 'Space Mono', monospace; font-size: 0.85rem; width: 100%;">
                 </div>
                 <div class="config-row">
                     <span class="config-label">Rate Limit</span>
@@ -717,7 +723,7 @@
                         <span class="preview-meta-label">Subject:</span>
                         <span class="preview-meta-value" id="previewSubject">-</span>
                     </div>
-                    <div class="preview-meta-row">
+                    <div class="preview-meta-row" id="previewAttachmentRow">
                         <span class="preview-meta-label">Attachment:</span>
                         <span class="preview-meta-value" id="previewAttachment">-</span>
                     </div>
@@ -802,7 +808,9 @@
         // Preview
         previewBtn.addEventListener('click', async () => {
             try {
-                const response = await fetch('/preview');
+                const fromName = document.getElementById('fromName').value;
+                const subject = document.getElementById('emailSubject').value;
+                const response = await fetch(`/preview?from_name=${encodeURIComponent(fromName)}&subject=${encodeURIComponent(subject)}`);
                 const data = await response.json();
                 
                 if (data.error) {
@@ -812,7 +820,13 @@
                 
                 document.getElementById('previewFrom').textContent = data.from;
                 document.getElementById('previewSubject').textContent = data.subject;
-                document.getElementById('previewAttachment').textContent = data.pdf_name;
+                const attachRow = document.getElementById('previewAttachmentRow');
+                if (data.pdf_name) {
+                    document.getElementById('previewAttachment').textContent = data.pdf_name;
+                    attachRow.style.display = '';
+                } else {
+                    attachRow.style.display = 'none';
+                }
                 document.getElementById('previewFrame').srcdoc = data.html;
                 previewModal.classList.add('active');
                 
@@ -843,7 +857,13 @@
             progressContainer.classList.add('active');
             
             try {
-                const response = await fetch('/send', { method: 'POST' });
+                const fromName = document.getElementById('fromName').value;
+                const subject = document.getElementById('emailSubject').value;
+                const response = await fetch('/send', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ from_name: fromName, subject: subject })
+                });
                 const data = await response.json();
                 
                 if (data.error) {
