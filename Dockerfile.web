@@ -9,6 +9,11 @@ FROM python:3.12-slim
 
 RUN useradd -r -s /bin/false appuser
 
+# Pre-create all required directories with correct ownership BEFORE switching user
+RUN mkdir -p /app/uploads && \
+    mkdir -p /app/templates && \
+    chown -R appuser:appuser /app
+
 WORKDIR /app
 
 # Copy installed packages from builder
@@ -17,12 +22,9 @@ COPY --from=builder /usr/local/lib/python3.12/site-packages \
 
 COPY --from=builder /usr/local/bin /usr/local/bin
 
-# Copy application code
-COPY app.py .
-COPY templates/ ./templates/
-
-# Pre-create uploads folder with correct ownership
-RUN mkdir -p /app/uploads && chown -R appuser:appuser /app
+# Copy application code (owned by appuser via WORKDIR ownership set above)
+COPY --chown=appuser:appuser app.py .
+COPY --chown=appuser:appuser templates/ ./templates/
 
 USER appuser
 
