@@ -1,0 +1,22 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+namespace: dev
+
+resources:
+  - ../../base
+
+# CI automatically updates newTag on every push to dev
+images:
+  - name: ghcr.io/ranu-ai4/bulk-email
+    newName: ghcr.io/ranu-ai4/bulk-email
+    newTag: "dev-placeholder"
+
+patches:
+  - patch: |-
+      - op: replace
+        path: /spec/replicas
+        value: 1
+    target:
+      kind: Deployment
+      name: bulk-emailer-web
