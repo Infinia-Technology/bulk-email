@@ -10,7 +10,7 @@ resources:
 images:
   - name: ghcr.io/infinia-technology/bulk-email
     newName: ghcr.io/infinia-technology/bulk-email
-    newTag: "dev-f8f1dbb"
+    newTag: "dev-4fd878d"
 
 patches:
   - patch: |-
