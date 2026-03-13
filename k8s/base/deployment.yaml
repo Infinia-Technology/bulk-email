@@ -1,0 +1,62 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: bulk-emailer-web
+  namespace: dev
+  labels:
+    app: bulk-emailer
+    component: web
+spec:
+  replicas: 1   # overridden by overlays
+  selector:
+    matchLabels:
+      app: bulk-emailer
+      component: web
+  template:
+    metadata:
+      labels:
+        app: bulk-emailer
+        component: web
+    spec:
+      imagePullSecrets:
+        - name: ghcr-secret
+
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 999
+
+      containers:
+        - name: web
+          image: ghcr.io/ranu-ai4/bulk-email:dev-placeholder  # replaced by Kustomize overlay
+          ports:
+            - containerPort: 5000
+
+          envFrom:
+            - configMapRef:
+                name: bulk-emailer-config
+            - secretRef:
+                name: bulk-emailer-secret
+
+          resources:
+            requests:
+              cpu: "100m"
+              memory: "256Mi"
+            limits:
+              cpu: "500m"
+              memory: "512Mi"
+
+          livenessProbe:
+            httpGet:
+              path: /api/health
+              port: 5000
+            initialDelaySeconds: 30
+            periodSeconds: 15
+            failureThreshold: 3
+
+          readinessProbe:
+            httpGet:
+              path: /api/health
+              port: 5000
+            initialDelaySeconds: 10
+            periodSeconds: 10
+            failureThreshold: 3
