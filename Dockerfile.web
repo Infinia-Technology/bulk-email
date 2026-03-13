@@ -21,6 +21,9 @@ COPY --from=builder /usr/local/bin /usr/local/bin
 COPY app.py .
 COPY templates/ ./templates/
 
+# Pre-create uploads folder with correct ownership
+RUN mkdir -p /app/uploads && chown -R appuser:appuser /app
+
 USER appuser
 
 EXPOSE 5000
