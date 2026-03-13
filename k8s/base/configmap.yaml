@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: bulk-emailer-config
+  namespace: dev
+  labels:
+    app: bulk-emailer
+data:
+  FROM_EMAIL: "support@yourdomain.com"
+  FROM_NAME: "SAIF Support"
+  EMAIL_SUBJECT: "SAIF Newsletter"
+  RATE_LIMIT: "2"
+  BaseURL: "https://openrouter.ai/api/v1"
