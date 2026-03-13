@@ -8,8 +8,8 @@ resources:
 
 # CI automatically updates newTag on every push to dev
 images:
-  - name: ghcr.io/ranu-ai4/bulk-email
-    newName: ghcr.io/ranu-ai4/bulk-email
+  - name: ghcr.io/Infinia-Technology/bulk-email
+    newName: ghcr.io/Infinia-Technology/bulk-email
     newTag: "dev-placeholder"
 
 patches:
