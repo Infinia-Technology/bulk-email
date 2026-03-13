@@ -16,7 +16,7 @@ spec:
 
   destination:
     server: https://kubernetes.default.svc
-    namespace: dev
+    namespace: bulk-email
 
   syncPolicy:
     syncOptions:
