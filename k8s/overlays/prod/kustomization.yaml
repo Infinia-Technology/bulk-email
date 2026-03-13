@@ -7,8 +7,8 @@ resources:
   - ../../base
 
 images:
-  - name: ghcr.io/ranu-ai4/bulk-email
-    newName: ghcr.io/ranu-ai4/bulk-email
+  - name: ghcr.io/Infinia-Technology/bulk-email
+    newName: ghcr.io/Infinia-Technology/bulk-email
     newTag: "prod-placeholder"
 
 patches:
