@@ -8,8 +8,8 @@ resources:
 
 # CI automatically updates newTag on every push to dev
 images:
-  - name: ghcr.io/Infinia-Technology/bulk-email
-    newName: ghcr.io/Infinia-Technology/bulk-email
+  - name: ghcr.io/infinia-technology/bulk-email
+    newName: ghcr.io/infinia-technology/bulk-email
     newTag: "dev-95fab26"
 
 patches:
