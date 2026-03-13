@@ -1,0 +1,29 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: bulk-emailer-web
+  namespace: dev
+  labels:
+    app: bulk-emailer
+  annotations:
+    nginx.ingress.kubernetes.io/proxy-read-timeout: "300"
+    nginx.ingress.kubernetes.io/proxy-send-timeout: "300"
+    nginx.ingress.kubernetes.io/proxy-body-size: "20m"   # allow PDF/image uploads
+    # cert-manager.io/cluster-issuer: letsencrypt-prod   # uncomment for TLS
+spec:
+  ingressClassName: nginx
+  rules:
+    - host: dispatch.iamsaif.ai
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: bulk-emailer-web
+                port:
+                  number: 80
+  # tls:
+  #   - hosts:
+  #       - dispatch.iamsaif.ai
+  #     secretName: bulk-emailer-tls
