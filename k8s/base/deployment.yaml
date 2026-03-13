@@ -27,7 +27,7 @@ spec:
 
       containers:
         - name: web
-          image: ghcr.io/Infinia-Technology/bulk-email:dev-placeholder  # replaced by Kustomize overlay
+          image: ghcr.io/infinia-technology/bulk-email:dev-placeholder  # replaced by Kustomize overlay
           ports:
             - containerPort: 5000
 
