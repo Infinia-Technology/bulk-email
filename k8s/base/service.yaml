@@ -1,0 +1,18 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: bulk-emailer-web
+  namespace: dev
+  labels:
+    app: bulk-emailer
+    component: web
+spec:
+  selector:
+    app: bulk-emailer
+    component: web
+  ports:
+    - name: http
+      protocol: TCP
+      port: 80
+      targetPort: 5000
+  type: ClusterIP
