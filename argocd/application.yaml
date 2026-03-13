@@ -1,0 +1,24 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: bulk-emailer-dev
+  namespace: argocd
+  labels:
+    app: bulk-emailer
+    env: dev
+spec:
+  project: default
+
+  source:
+    repoURL: https://github.com/Ranu-ai4/bulk-email
+    targetRevision: main        # ArgoCD always syncs from main (merged PRs)
+    path: k8s/overlays/dev      # deploy dev overlay
+
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: dev
+
+  syncPolicy:
+    syncOptions:
+      - CreateNamespace=true
+    # Sync is MANUAL — trigger from ArgoCD UI after merging dev → main PR
