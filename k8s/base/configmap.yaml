@@ -2,7 +2,7 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: bulk-emailer-config
-  namespace: dev
+  namespace: bulk-email
   labels:
     app: bulk-emailer
 data:
