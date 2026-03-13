@@ -2,7 +2,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: bulk-emailer-web
-  namespace: dev
+  namespace: bulk-email
   labels:
     app: bulk-emailer
     component: web
