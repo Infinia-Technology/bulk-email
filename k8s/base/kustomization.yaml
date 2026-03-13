@@ -5,6 +5,7 @@ namespace: dev
 
 resources:
   - configmap.yaml
+  - namespace.yaml
   - secret.yaml
   - mongodb.yaml
   - deployment.yaml
