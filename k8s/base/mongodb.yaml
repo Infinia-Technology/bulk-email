@@ -34,22 +34,22 @@ spec:
             limits:
               cpu: "500m"
               memory: "512Mi"
-          livenessProbe:
-            exec:
-              command:
-                - mongosh
-                - --eval
-                - "db.adminCommand('ping')"
-            initialDelaySeconds: 30
-            periodSeconds: 20
-          readinessProbe:
-            exec:
-              command:
-                - mongosh
-                - --eval
-                - "db.adminCommand('ping')"
-            initialDelaySeconds: 10
-            periodSeconds: 10
+          #livenessProbe:
+            #exec:
+              #command:
+                #- mongosh
+                #- --eval
+                #- "db.adminCommand('ping')"
+            #initialDelaySeconds: 30
+            #periodSeconds: 20
+          #readinessProbe:
+            #exec:
+              #command:
+                #- mongosh
+                #- --eval
+                #- "db.adminCommand('ping')"
+            #initialDelaySeconds: 10
+            #periodSeconds: 10
   volumeClaimTemplates:
     - metadata:
         name: mongo-data
